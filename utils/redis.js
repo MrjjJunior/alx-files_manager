@@ -1,29 +1,22 @@
-import { createClient } from 'redis'; 
-
-const client = createClient();
-
+import redis from 'redis';
 
 class RedisClient {
   constructor() {
-    this.client = createClient();
-
-    this.client.on('error', (err) => {
-      console.error(err);
-    });
-
-    this.client.connect().catch((err) => {
-      console.error(err);
+    this.client = redis.createClient();
+    this.client.on('error', (error) => {
+      console.error(error);
     });
   }
+
   isAlive() {
     return this.client.connected;
   }
 
-  async get(key){
+  async get(key) {
     return new Promise((resolve, reject) => {
-      this.client.get(key, (err, reply) => {
-        if (err) {
-          reject(err);
+      this.client.get(key, (error, reply) => {
+        if (error) {
+          reject(error);
         } else {
           resolve(reply);
         }
@@ -33,9 +26,9 @@ class RedisClient {
 
   async set(key, value, duration) {
     return new Promise((resolve, reject) => {
-      this.client.setex(key, duration, value, (err, reply) => {
-        if (err) {
-          reject(err);
+      this.client.setex(key, duration, value, (error, reply) => {
+        if (error) {
+          reject(error);
         } else {
           resolve(reply);
         }
@@ -44,9 +37,10 @@ class RedisClient {
   }
 
   async del(key) {
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, _reject) => {
-      this.client.del(key, (err) => {
-        if (err) {
+      this.client.del(key, (error) => {
+        if (error) {
           resolve(false);
         } else {
           resolve(true);
@@ -56,5 +50,5 @@ class RedisClient {
   }
 }
 
-const RedisClient = new RedisClient();
-export default RedisClient;
+const redisClient = new RedisClient();
+export default redisClient;
